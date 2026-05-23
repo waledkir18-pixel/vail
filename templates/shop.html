@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>معرض نجوم للعبايات الفاخرة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Tajawal', sans-serif; }</style>
+</head>
+<body class="bg-[#FBF9F6] text-neutral-800">
+
+    <header class="bg-white shadow-2xs sticky top-0 z-50 border-b border-neutral-100">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-neutral-900 tracking-widest">نـجُـوم لـلـعَ//ـبَـايَ//ـات</h1>
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-neutral-600">أهلاً بكِ، {{ user_name }}</span>
+                <a href="/logout" class="text-xs text-red-500 hover:underline">تسجيل الخروج</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-4xl mx-auto text-center my-10 px-4">
+        <h2 class="text-3xl font-light text-neutral-800 mb-2">كتالوج التشكيلة الفاخرة المحدثة</h2>
+        <p class="text-neutral-500 text-sm">تصفحي المجموعات الحصرية المرفوعة حديثاً بالصور والتفاصيل</p>
+    </section>
+
+    <!-- شريط الكتالوجات -->
+    <div class="max-w-5xl mx-auto px-4 mb-8 flex flex-wrap gap-2 justify-center border-b pb-4">
+        <a href="/shop?catalog=الكل" class="px-5 py-2 rounded-full text-xs font-bold transition {% if selected_catalog == 'الكل' %}bg-neutral-900 text-white{% else %}bg-white border text-neutral-600 hover:bg-neutral-50{% endif %}">
+            كل المجموعات ✨
+        </a>
+        {% for cat in catalogs %}
+        <a href="/shop?catalog={{ cat }}" class="px-5 py-2 rounded-full text-xs font-bold transition {% if selected_catalog == cat %}bg-amber-800 text-white{% else %}bg-white border text-neutral-600 hover:bg-neutral-50{% endif %}">
+            {{ cat }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 pb-20">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for abaya in abayas %}
+            <div class="bg-white rounded-2xl p-4 border border-neutral-100 shadow-2xs flex flex-col justify-between relative overflow-hidden">
+                
+                {% if abaya.discount > 0 %}
+                <div class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg z-10 shadow-2xs">
+                    خصم {{ abaya.discount }}%
+                </div>
+                {% endif %}
+
+                <div>
+                    <!-- عـرض صـورة الـعـبـايـة الـحـقـيـقـيـة المرفوعة هنا -->
+                    <div class="w-full h-64 bg-neutral-50 rounded-xl mb-4 overflow-hidden border">
+                        <img src="{{ url_for('static', filename='uploads/' + abaya.image_file) }}" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                    </div>
+                    <span class="text-[10px] bg-amber-50 text-amber-800 font-bold px-2.5 py-0.5 rounded-md mb-2 inline-block">{{ abaya.catalog }}</span>
+                    <h3 class="text-md font-bold text-neutral-800 mb-1">{{ abaya.title }}</h3>
+                    <p class="text-neutral-500 text-xs leading-relaxed mb-4 whitespace-pre-line">{{ abaya.details }}</p>
+                </div>
+                
+                <div class="border-t pt-3 mt-3 flex justify-between items-center">
+                    <span class="text-xs text-neutral-400 font-medium">السعر :</span>
+                    <div class="text-left">
+                        {% if abaya.discount > 0 %}
+                            <span class="text-xs text-neutral-400 line-through block mb-0.5">{{ abaya.price }} ر.س</span>
+                            <span class="text-base font-bold text-red-600">
+                                {{ "%.2f"|format(abaya.price * (1 - abaya.discount / 100)) }} ر.س
+                            </span>
+                        {% else %}
+                            <span class="text-base font-bold text-amber-900">{{ abaya.price }} ر.س</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed text-neutral-400 text-sm">
+                لا توجد عبايات مرفوعة في هذا الكتالوج حالياً.
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+</body>
+</html>
